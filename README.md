@@ -1,7 +1,6 @@
 # mygrep — распределённый grep с кворумом
 
-<!-- ПОСЛЕ ПУША НА GITHUB: замени OWNER/REPO на свой GitHub-путь -->
-![ci](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)
+![ci](https://github.com/lol-pick/mygrep/actions/workflows/ci.yml/badge.svg)
 ![go](https://img.shields.io/badge/go-1.26-00ADD8?logo=go)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
