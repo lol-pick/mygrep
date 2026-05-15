@@ -1,0 +1,60 @@
+name: mygrep
+
+x-worker-base: &worker_base
+  build:
+    context: .
+    args:
+      VERSION: compose
+  image: mygrep:local
+  restart: unless-stopped
+  networks: [meshnet]
+
+services:
+  worker1:
+    <<: *worker_base
+    container_name: mygrep-w1
+    command: ["-mode=server", "-listen=:8081", "-id=w1"]
+    ports: ["8081:8081"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  worker2:
+    <<: *worker_base
+    container_name: mygrep-w2
+    command: ["-mode=server", "-listen=:8082", "-id=w2"]
+    ports: ["8082:8082"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8082/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  worker3:
+    <<: *worker_base
+    container_name: mygrep-w3
+    command: ["-mode=server", "-listen=:8083", "-id=w3"]
+    ports: ["8083:8083"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8083/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  coordinator:
+    <<: *worker_base
+    profiles: ["cli"]
+    container_name: mygrep-coordinator
+    depends_on:
+      worker1: { condition: service_healthy }
+      worker2: { condition: service_healthy }
+      worker3: { condition: service_healthy }
+    volumes:
+      - ./:/data:ro
+    restart: "no"
+
+networks:
+  meshnet:
+    driver: bridge
